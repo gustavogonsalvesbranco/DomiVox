@@ -32,7 +32,10 @@ Oferecer uma experiência de dominó digital multiplayer, acessível para:
 ## Como Executar
 
 ```bash
-git clone https://github.com/seu-usuario/DomiVox.git
+git clone https://github.com/gustavogonsalvesbranco/DomiVox.git
+```bash
 cd DomiVox
+```bash
 npm install
+```bash
 npx expo start
