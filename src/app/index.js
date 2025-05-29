@@ -2,21 +2,41 @@ import { StatusBar } from "expo-status-bar";
 import { Image, Text, TextInput, TouchableOpacity, Vibration, View } from "react-native";
 import { styles } from "./styles";
 import Avatar from "../components/Avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
-  const [userName, setUserName] = useState("Player");
+  const [userName, setUserName] = useState("");
 
-  const play = () => {
-    const data = {
-      id: Date.now().toString(),
-      userName,
+  useEffect(() => {
+    const loadUserName = async () => {
+      try {
+        const name = await AsyncStorage.getItem("userName");
+        if (name) setUserName(name);
+      } catch (error) {
+        console.error("Erro ao carregar nome:", error);
+      }
     };
 
-    Vibration.vibrate(100);
+    loadUserName();
+  }, []);
 
-    router.push("/conection");
+  useEffect(() => {
+    const saveUserName = async () => {
+      try {
+        await AsyncStorage.setItem("userName", userName);
+      } catch (error) {
+        console.error("Erro ao salvar nome:", error);
+      }
+    };
+
+    saveUserName();
+  }, [userName]);
+
+  const play = () => {
+    Vibration.vibrate(100);
+    router.push("/connection");
   };
 
   return (
@@ -35,7 +55,7 @@ export default function App() {
 
       <TextInput
         style={styles.input}
-        placeholder="Digite seu nome de usuário"
+        placeholder="Digite seu nome"
         placeholderTextColor="#eee"
         value={userName}
         onChangeText={setUserName}
