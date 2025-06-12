@@ -1,38 +1,55 @@
 import { StatusBar } from "expo-status-bar";
-import { Image, Text, TextInput, TouchableOpacity, Vibration, View } from "react-native";
+import {
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Vibration,
+  View,
+} from "react-native";
 import { styles } from "./styles";
 import Avatar from "../components/Avatar";
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import socket from "../utils/socket";
+import { pickAndUploadImage } from "react-native-cloudlink";
 
 export default function App() {
-  const [userName, setUserName] = useState("");
+  const [user, setUser] = useState({
+    id: socket.id,
+    name: "Anônimo",
+    image: "",
+  });
 
   useEffect(() => {
-    const loadUserName = async () => {
-      try {
-        const name = await AsyncStorage.getItem("userName");
-        if (name) setUserName(name);
-      } catch (error) {
-        console.error("Erro ao carregar nome:", error);
+  const loadUser = async () => {
+    try {
+      const userStorage = await AsyncStorage.getItem("user");
+
+      if (userStorage) {
+        const parsed = JSON.parse(userStorage);
+        setUser({ ...parsed, id: socket.id });
       }
-    };
+    } catch (error) {
+      console.error("Erro ao carregar user:", error);
+    }
+  };
 
-    loadUserName();
-  }, []);
+  loadUser();
+}, []);
 
   useEffect(() => {
-    const saveUserName = async () => {
+    const saveUser = async () => {
       try {
-        await AsyncStorage.setItem("userName", userName);
+        await AsyncStorage.setItem("user", JSON.stringify(user));
       } catch (error) {
         console.error("Erro ao salvar nome:", error);
       }
     };
 
-    saveUserName();
-  }, [userName]);
+    saveUser();
+  }, [user]);
 
   const play = () => {
     Vibration.vibrate(100);
@@ -51,14 +68,14 @@ export default function App() {
         accessibilityRole="header"
       />
 
-      <Avatar userName={userName} />
+      <Avatar user={user} setUser={setUser} />
 
       <TextInput
         style={styles.input}
         placeholder="Digite seu nome"
         placeholderTextColor="#eee"
-        value={userName}
-        onChangeText={setUserName}
+        value={user?.name}
+        onChangeText={(name) => setUser({ ...user, name })}
         autoCapitalize="words"
       />
 

@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://192.168.100.92:8080", {
+const socket = io("https://domivox.glitch.me", {
   transports: ["websocket"],
   autoConnect: false,
 });

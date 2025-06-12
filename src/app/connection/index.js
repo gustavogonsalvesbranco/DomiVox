@@ -7,15 +7,38 @@ import {
   Vibration,
 } from "react-native";
 import { styles } from "./styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { color } from "../../colors";
 import socket from "../../utils/socket";
 import { router } from "expo-router";
 import { showMessage } from "react-native-flash-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Connection() {
   const [code, setCode] = useState("");
+  const [user, setUser] = useState({
+    id: socket.id,
+    name: "Anônimo",
+    image: "",
+  });
+
+  useEffect(() => {
+  const loadUser = async () => {
+    try {
+      const userStorage = await AsyncStorage.getItem("user");
+
+      if (userStorage) {
+        const parsed = JSON.parse(userStorage);
+        setUser({ ...parsed, id: socket.id });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar user:", error);
+    }
+  };
+
+  loadUser();
+}, []);
 
   const createCode = () =>
     Math.random().toString(36).substring(2, 12).toUpperCase();
@@ -33,7 +56,12 @@ export default function Connection() {
       return;
     }
 
-    socket.emit("joinRoom", code.trim().toUpperCase());
+    const data = {
+      ...user,
+      isHost: false,
+    };
+
+    socket.emit("joinRoom", code.trim().toUpperCase(), data);
 
     socket.on("roomJoined", () => {
       Vibration.vibrate(100);
@@ -55,19 +83,16 @@ export default function Connection() {
 
   const createRoom = () => {
     const data = {
-      code: createCode(),
-      players: [
-        {
-          name: "Gustavo",
-          id: socket.id,
-          isHost: true,
-        },
-      ],
+      ...user,
+      isHost: true,
     };
 
-    socket.emit("createRoom", data);
+    const code = createCode();
+
+    socket.emit("createRoom", code, data);
+    
     Vibration.vibrate(100);
-    router.push("/lobby");
+    router.replace("/lobby");
   };
 
   return (

@@ -14,5 +14,20 @@ export const styles = StyleSheet.create({
     avatar: {
         width: "90%",
         height: "90%",	
-    }
+        resizeMode: 'contain',
+        borderRadius: 100,
+    },
+    camera: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: color.white,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: color.comment,
+    },
 });

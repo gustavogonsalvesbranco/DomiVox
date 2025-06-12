@@ -1,11 +1,10 @@
 {
   "expo": {
     "name": "DomiVox",
-    "slug": "DomiVox",
+    "slug": "domivox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "domivox",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -18,13 +17,29 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#282a36"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.gustavobr.DomiVox"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-image-picker"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "401c50a0-dacd-4895-aa54-c41875d90535"
+      }
     }
   }
 }

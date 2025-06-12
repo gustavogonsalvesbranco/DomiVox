@@ -29,6 +29,7 @@ export default function _layout() {
           }}
         />
         <Stack.Screen name="lobby/index" options={{ headerShown: false }} />
+        <Stack.Screen name="game/index" options={{ headerShown: false }} />
       </Stack>
       <FlashMessage position="top" />
     </>
