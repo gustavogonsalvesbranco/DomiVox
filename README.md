@@ -78,7 +78,7 @@ Consulte o arquivo LICENSE para mais informações.
 📬 Contato
 
 Gustavo Gonçalves
-✉️ [gustavogonsalves1709@gmail.com](mailto: gustavogonsalves1709@gmail.com)
+✉️ [gustavogonsalves1709@gmail.com](mailto:gustavogonsalves1709@gmail.com)
 
 
 Feito com ❤️ por e para pessoas com deficiência visual.
