@@ -19,15 +19,10 @@
 - ♿ **Acessibilidade nativa**  
   Suporte completo ao TalkBack e leitores de tela. Todos os botões e elementos são acessíveis e descritos de forma clara e objetiva.
 
----
-
 ## 🛠️ Tecnologias Utilizadas
 
 - **React Native com Expo** – Framework moderno para desenvolvimento mobile acessível.
 - **Socket.IO (cliente e servidor)** – Comunicação em tempo real entre jogadores.
-- **SQLite** – Armazenamento local de informações das partidas.
-
----
 
 ## ⚙️ Pré-requisitos
 
@@ -41,8 +36,6 @@ Certifique-se de ter instalado na sua máquina:
 npm install -g expo-cli
 
 
----
-
 🚀 Como Executar o Projeto
 
 1. Clone o repositório:
@@ -55,9 +48,6 @@ cd DomiVox
 npx expo start
 
 Você poderá rodar o app em um emulador Android ou diretamente no celular via QR Code (com o app Expo Go instalado).
-
-
----
 
 🤝 Como Contribuir
 
@@ -80,25 +70,15 @@ git push origin feature/nova-funcionalidade
 
 5. Abra um Pull Request
 
-
-
-
----
-
 📄 Licença
 
 Este projeto está licenciado sob a MIT License.
 Consulte o arquivo LICENSE para mais informações.
-
-
----
 
 📬 Contato
 
 Gustavo Gonçalves
 ✉️ gustavogonsalves1709@gmail.com
 
-
----
 
 Feito com ❤️ por e para pessoas com deficiência visual.
