@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  AccessibilityInfo,
+  Vibration,
+  FlatList,
+} from "react-native";
 import { styles } from "./styles";
 import { useEffect, useState } from "react";
 import socket from "../../utils/socket";
@@ -6,72 +13,77 @@ import { showMessage } from "react-native-flash-message";
 import { AntDesign, MaterialIcons, Entypo } from "@expo/vector-icons";
 import { color } from "../../colors";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 
 export default function Lobby() {
-  const [code, setCode] = useState("");
-  const [players, setPlayers] = useState([]);
-  const [status, setStatus] = useState("");
+  const [room, setRoom] = useState({});
 
   useEffect(() => {
-    socket.on("newPlayer", (player) => {
+    socket.on("room:newPlayer", (title, message) => {
+      Vibration.vibrate([0, 200, 100, 200]);
       showMessage({
         type: "info",
-        message: "Novo Jogador",
-        description: `${player.name} entrou na sala`,
+        message: title,
+        description: message,
         icon: "auto",
         duration: 5000,
       });
+
+      AccessibilityInfo.announceForAccessibility(message);
     });
 
-    socket.on("showInfoRoom", (data) => {
-      setCode(data.code);
-      setPlayers(data.players);
-      setStatus(data.status);
-    });
+    socket.on("room:showInfo", (data) => setRoom(data));
 
-    socket.on("roomClosed", () => {
+    socket.on("room:closed", (title, message) => {
+      Vibration.vibrate([0, 200, 100, 200]);
       showMessage({
         type: "warning",
-        message: "Sala encerrada",
-        description: "Todos os jogadores saíram da sala.",
+        message: title,
+        description: message,
         duration: 4000,
         icon: "auto",
       });
-      router.replace("/");
+
+      AccessibilityInfo.announceForAccessibility(message);
+
+      router.replace("/connection");
     });
 
-    socket.on("started", () => {
+    socket.on("room:started", (title, message) => {
+      Vibration.vibrate([0, 200, 100, 200]);
       showMessage({
         type: "success",
-        message: "Jogo iniciado",
-        description: "A partida começou!",
+        message: title,
+        description: message,
         duration: 3000,
         icon: "auto",
       });
+
+      AccessibilityInfo.announceForAccessibility(message);
+
       router.replace("/game");
-    }
-    );
+    });
 
     return () => {
-      socket.off("newPlayer");
-      socket.off("showInfoRoom");
-      socket.off("roomClosed");
-      socket.off("started");
+      socket.off("room:newPlayer");
+      socket.off("room:showInfo");
+      socket.off("room:closed");
+      socket.off("room:started");
     };
   }, []);
 
   const closeRoom = () => {
-    socket.emit("closeRoom", code);
-    router.replace("/"); // ou router.back() se preferir voltar
+    socket.emit("room:close", room?.code);
+    router.replace("/connection"); // ou router.back() se preferir voltar
   };
 
   const startGame = () => {
-    if (players.length > 1) {
-      socket.emit("startGame", code);
+    if (room?.players.length > 1) {
+      socket.emit("room:start", room?.code);
     }
   };
 
-  const isReady = players.length > 1;
+  const isReady = room?.players?.length > 1;
 
   return (
     <View style={styles.container}>
@@ -79,37 +91,47 @@ export default function Lobby() {
         <TouchableOpacity
           style={styles.back}
           activeOpacity={0.6}
-          onPress={closeRoom}
+          onPress={() => closeRoom()}
           accessibilityLabel="Sair da sala"
           accessibilityRole="button"
         >
           <AntDesign name="back" size={24} color={color.foreground} />
         </TouchableOpacity>
 
-        <Text style={styles.code} selectable>Código: {code}</Text>
+        <Text style={styles.code} selectable>
+          Código: {room?.code}
+        </Text>
       </View>
 
-      <Text style={styles.statusText} selectable>{status}</Text>
+      <Text style={styles.statusText} selectable>
+        {room?.status}
+      </Text>
 
       <View style={styles.players}>
-        {players.map((player) => (
-          <View key={player.id} style={styles.player}>
-            <Image
-              style={styles.avatar}
-              source={{
-                uri: player.image,
-              }}
-            />
-            <Text style={styles.playerName}>{player.name}</Text>
-            {player.isHost && (
-              <MaterialIcons
-                name="admin-panel-settings"
-                size={20}
-                color={color.green}
+        <FlatList
+          style={styles.list}
+          data={room?.players}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.player}>
+              <Image
+                style={styles.avatar}
+                source={[
+                  item.image,
+                  require("./../../../assets/images/anonimo.png"),
+                ]}
               />
-            )}
-          </View>
-        ))}
+              <Text style={styles.playerName}>{item.name}</Text>
+              {item.isHost && (
+                <MaterialIcons
+                  name="admin-panel-settings"
+                  size={20}
+                  color={color.green}
+                />
+              )}
+            </View>
+          )}
+        />
       </View>
 
       <TouchableOpacity
@@ -117,7 +139,7 @@ export default function Lobby() {
           styles.startButton,
           isReady ? styles.startButtonEnabled : styles.startButtonDisabled,
         ]}
-        onPress={startGame}
+        onPress={() => startGame()}
         disabled={!isReady}
         accessibilityRole="button"
         activeOpacity={0.6}

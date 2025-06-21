@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import {
-  Image,
   Text,
   TextInput,
   TouchableOpacity,
@@ -13,31 +12,34 @@ import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import socket from "../utils/socket";
-import { pickAndUploadImage } from "react-native-cloudlink";
+import { Image } from "expo-image";
 
 export default function App() {
-  const [user, setUser] = useState({
-    id: socket.id,
-    name: "Anônimo",
-    image: "",
-  });
+  const [user, setUser] = useState({});
 
   useEffect(() => {
-  const loadUser = async () => {
-    try {
-      const userStorage = await AsyncStorage.getItem("user");
+    const loadUser = async () => {
+      try {
+        const userStorage = await AsyncStorage.getItem("user");
 
-      if (userStorage) {
-        const parsed = JSON.parse(userStorage);
-        setUser({ ...parsed, id: socket.id });
+        if (userStorage) {
+          const parsed = JSON.parse(userStorage);
+          setUser({ ...parsed, id: socket.id });
+        } else {
+          const data = {
+            id: socket.id,
+            name: "Anônimo",
+          };
+          setUser(data);
+          await AsyncStorage.setItem("user", JSON.stringify(data));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar user:", error);
       }
-    } catch (error) {
-      console.error("Erro ao carregar user:", error);
-    }
-  };
+    };
 
-  loadUser();
-}, []);
+    loadUser();
+  }, []);
 
   useEffect(() => {
     const saveUser = async () => {
@@ -85,13 +87,13 @@ export default function App() {
           activeOpacity={0.6}
           accessibilityRole="button"
           accessibilityHint="Toque duas vezes para ir para tela de salas criadas"
-          onPress={play}
+          onPress={() => play()}
         >
           <Text style={styles.buttonText}>Jogar</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.version}>v1.0.0</Text>
+      <Text style={styles.version}>v2.0.0</Text>
     </View>
   );
 }

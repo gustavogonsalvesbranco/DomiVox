@@ -1,8 +1,9 @@
-import { Image, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { AntDesign } from "@expo/vector-icons";
 import { color } from "../../colors";
 import { pickAndUploadImage } from "react-native-cloudlink";
+import { Image } from "expo-image";
 
 export default function Avatar({ user, setUser }) {
   const loadImage = async () => {
@@ -17,11 +18,7 @@ export default function Avatar({ user, setUser }) {
   return (
     <View style={styles.container}>
       <Image
-        source={{
-          uri:
-            user.image ||
-            `https://ui-avatars.com/api/?name=${user.name}&color=fff&background=random&rounded=true&length=2`,
-        }}
+        source={[user.image, require("./../../../assets/images/anonimo.png")]}
         style={styles.avatar}
         accessibilityLabel="Seu avatar"
         accessibilityRole="image"

@@ -6,8 +6,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: color.bg,
     alignItems: "center",
-    justifyContent: "center",
-    gap: 20,
+    justifyContent: "space-evenly",
   },
   input: {
     backgroundColor: color.currentLine,
@@ -50,5 +49,30 @@ export const styles = StyleSheet.create({
     color: color.foreground,
     fontSize: 22,
     fontWeight: "bold",
+  },
+  rooms: {
+    width: "90%",
+    height: "60%",
+    borderWidth: 2,
+    borderColor: color.comment,
+    borderRadius: 10,
+    backgroundColor: color.currentLine,
+    padding: 10,
+  },
+  list: {
+    width: "100%",
+  },
+  noRooms: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  message: {
+    color: color.foreground,
+    fontFamily: "monospace",
+    fontWeight: 'bold',
+    textAlign: "center",
+    fontSize: 18,
+    marginTop: 10,
   },
 });
